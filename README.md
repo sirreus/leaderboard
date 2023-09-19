@@ -9,8 +9,8 @@
 
 ## Emitter
 - The backend service that emits the random data already exists and can be used as is.
-- To start it, go to "emitter" directory and run "npm i" and "npm start".
-- It will start a Socket.io server on ws://localhost:3050.
+- To start it, you need to have Node.js installed, change directory to "emitter" and, run "npm i" and "npm start".
+- It will start a Socket.io server on ws://localhost:3050
 
 ## Requirements
 - Use React with hooks, TypeScript, WebSocket. Any other technologies are optional.
