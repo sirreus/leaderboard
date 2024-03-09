@@ -1,7 +1,13 @@
 export interface IUserData {
-  username: string;
+  avatar: string;
   email: string;
   score: number;
+  userId: string;
+  username: string;
+}
+
+export interface ILeaderBoard {
+  data: IUserData[] | [];
 }
 
 export interface IUserDataRow {
