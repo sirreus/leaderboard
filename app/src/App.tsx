@@ -17,32 +17,55 @@ function App() {
   const [userData, setUserData] = useState<IUserData | null>(null);
   const [userDataList, updateUserDataList] = useState<IUserData[]>([]);
 
-  // fetch the data
-  useEffect(() => {
-    const notFilled = userDataList.length < tableSize;
+  const isFilled = userDataList.length === tableSize;
 
+  // Fetch the data
+  useEffect(() => {
     function handelSetUserData(data: any) {
       setUserData(data);
     }
 
-    if (!userData || notFilled) socket.on("userData", handelSetUserData);
+    const timeoutId = setTimeout(() => {
+      socket.on("userData", handelSetUserData);
+    }, 500);
 
     return () => {
+      clearTimeout(timeoutId);
       socket.off("userData", handelSetUserData);
     };
-  }, [socket, userData, tableSize, userDataList]);
+  }, [socket]);
 
-  // filling out the table
+  // Filling out the table
   useEffect(() => {
     const existData = userDataList.find(
       (data) => data.userId === userData?.userId
     );
-    if (userData && !existData) {
-      updateUserDataList((prev) => [...prev, userData]);
-    }
-  }, [userData, userDataList]);
 
-  // changing the amount of data in the table
+    if (userData && !existData) {
+      if (isFilled) {
+        const minScore = Math.min(...userDataList.map((user) => user.score));
+        const minScoreIndex = userDataList.findIndex(
+          (user) => user.score === minScore
+        );
+
+        // Compare the newUser's score with the minimum score
+        if (userData.score > userDataList[minScoreIndex].score) {
+          // Replace the userData with the minimum score with the newUser
+          userDataList.splice(minScoreIndex, 1, {
+            ...userData,
+            isHighlighted: true,
+          });
+        }
+      } else {
+        updateUserDataList((prev) => [
+          ...prev,
+          { ...userData, isHighlighted: true },
+        ]);
+      }
+    }
+  }, [userData, userDataList, isFilled]);
+
+  // Changing the amount of data in the table
   useEffect(() => {
     if (userDataList.length > tableSize) {
       const newArray = userDataList.slice(0, tableSize - 1);

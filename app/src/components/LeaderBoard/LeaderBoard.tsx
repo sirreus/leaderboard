@@ -25,7 +25,11 @@ export const LeaderBoard: React.FC<ILeaderBoard> = ({
         </TableHead>
         <TableBody>
           {sortedData.map((row: IUserData) => (
-            <UserDataRow data={row} handelDelete={handelDeleteUser} />
+            <UserDataRow
+              data={row}
+              handelDelete={handelDeleteUser}
+              key={row.userId}
+            />
           ))}
         </TableBody>
       </Table>
