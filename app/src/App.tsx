@@ -1,17 +1,23 @@
 import React, { useState, useEffect } from "react";
 import io from "socket.io-client";
 
-import { Box, Container, Tab, Tabs, Typography } from "@mui/material";
+import { Box, Container, Tab, Tabs } from "@mui/material";
 
+import { IUserData } from "./types";
+
+import AppHeader from "./components/AppHeader";
 import LeaderBoard from "./components/LeaderBoard";
 import Settings from "./components/Settings";
 
 import "./App.css";
-import { IUserData } from "./types";
+
+import { theme } from ".";
+
+const socket = io("ws://localhost:3050", {
+  autoConnect: false,
+});
 
 function App() {
-  const socket = io("ws://localhost:3050");
-
   const [tabIndex, setTabIndex] = useState<number>(0);
   const [tableSize, setTableSize] = useState<number>(10);
   const [userData, setUserData] = useState<IUserData | null>(null);
@@ -25,17 +31,33 @@ function App() {
       setUserData(data);
     }
 
-    const timeoutId = setTimeout(() => {
-      socket.on("userData", handelSetUserData);
-    }, 500);
+    socket.connect();
+    // EVENT LISTENERS
+    // socket.on('connect_error', ) // TODO show DISCONNECTED
+    // socket.on('connect', ) // TODO hide DISONNECTED if shown
+    socket.on("userData", handelSetUserData);
 
     return () => {
-      clearTimeout(timeoutId);
       socket.off("userData", handelSetUserData);
+      socket.disconnect();
     };
-  }, [socket]);
+  }, []);
 
   // Filling out the table
+  const compareScore = (newData: IUserData): void => {
+    const minScore = Math.min(...userDataList.map((user) => user.score));
+    const minScoreIndex = userDataList.findIndex(
+      (user) => user.score === minScore
+    );
+
+    // Compare the newUser's score with the minimum score
+    if (newData.score > userDataList[minScoreIndex].score) {
+      // Replace the userData with the minimum score with the newUser
+      userDataList.splice(minScoreIndex, 1, {
+        ...newData,
+      });
+    }
+  };
   useEffect(() => {
     const existData = userDataList.find(
       (data) => data.userId === userData?.userId
@@ -43,24 +65,9 @@ function App() {
 
     if (userData && !existData) {
       if (isFilled) {
-        const minScore = Math.min(...userDataList.map((user) => user.score));
-        const minScoreIndex = userDataList.findIndex(
-          (user) => user.score === minScore
-        );
-
-        // Compare the newUser's score with the minimum score
-        if (userData.score > userDataList[minScoreIndex].score) {
-          // Replace the userData with the minimum score with the newUser
-          userDataList.splice(minScoreIndex, 1, {
-            ...userData,
-            isHighlighted: true,
-          });
-        }
+        compareScore(userData);
       } else {
-        updateUserDataList((prev) => [
-          ...prev,
-          { ...userData, isHighlighted: true },
-        ]);
+        updateUserDataList((prev) => [...prev, { ...userData }]);
       }
     }
   }, [userData, userDataList, isFilled]);
@@ -93,14 +100,29 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
-        <Typography variant="h1" fontSize={32}>
-          Leaders chart
-        </Typography>
-      </header>
-      <Container component="main" sx={{ width: 768 }}>
+      <AppHeader
+        data={
+          userDataList.length > 1 ? userDataList.map((data) => data.avatar) : []
+        }
+      />
+
+      <Container
+        component="main"
+        sx={{
+          width: 768,
+          marginTop: "85px",
+          paddingBottom: "24px",
+          border: `2px solid ${theme.palette.yolo.main}`,
+          borderRadius: "16px",
+          backgroundColor: "white",
+        }}
+      >
         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-          <Tabs value={tabIndex} onChange={handleTabChange}>
+          <Tabs
+            value={tabIndex}
+            onChange={handleTabChange}
+            sx={{ paddingTop: "16px" }}
+          >
             <Tab label="LEADERBOARD" />
             <Tab label="SETTINGS" />
           </Tabs>
