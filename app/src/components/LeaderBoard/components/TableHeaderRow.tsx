@@ -2,11 +2,11 @@ import React from "react";
 
 import { TableCell, TableRow } from "@mui/material";
 
-import { IUserData } from "../../../../types";
-import { theme } from "../../../..";
+import { IUserData } from "../../../types";
+import { theme } from "../../..";
 
 export const TableHeaderRow = () => {
-  type IUserDataShort = Omit<IUserData, "avatar" | "userId" | "isHighlighted">;
+  type IUserDataShort = Omit<IUserData, "avatar" | "userId">;
   type ColumnNamesObject = Record<keyof IUserDataShort, undefined>;
   const ColumnNamesProps: ColumnNamesObject = {
     username: undefined,

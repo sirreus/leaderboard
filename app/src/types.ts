@@ -4,20 +4,10 @@ export interface IUserData {
   score: number;
   userId: string;
   username: string;
-  isHighlighted?: boolean;
 }
 
-export interface ILeaderBoard {
-  data: IUserData[] | [];
-  handelDeleteUser: (id: string) => void;
-}
-
-export interface IUserDataRow {
-  data: IUserData;
-  handelDelete: (id: string) => void;
-}
-
-export interface ISettings {
-  mark: number;
-  handleChange: (_: Event, newValue: number | number[]) => void;
+export interface IAppStore {
+  users: IUserData[];
+  tableSize: number;
+  lastAddedId?: string;
 }

@@ -1,6 +1,10 @@
 import React from "react";
-import { ISettings } from "../../types";
 import { Box, Slider, Typography } from "@mui/material";
+
+interface ISettings {
+  mark: number;
+  handleChange: (_: Event, newValue: number | number[]) => void;
+}
 
 export const Settings: React.FC<ISettings> = ({ mark, handleChange }) => {
   const MAX: number = 20;

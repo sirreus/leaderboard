@@ -1,31 +1,37 @@
-import { Container, Stack, Typography } from "@mui/material";
 import React from "react";
-import { theme } from "../..";
-import AvatarSpinner from "../AvatarSpinner";
 
-export const AppHeader: React.FC<{ data: string[] | [] }> = ({ data }) => {
+import { Box, Container } from "@mui/material";
+
+import { LogoTitle } from "./components/LogoTitle";
+import { ShortInfo } from "./components/ShortInfo";
+
+interface IAppHeader {
+  topValue: number;
+  avatar: string | undefined;
+}
+
+export const AppHeader: React.FC<IAppHeader> = ({ topValue, avatar }) => {
   return (
     <Container
       component="header"
       sx={{
         position: "fixed",
         top: 0,
-        maxWidth: 768,
+        maxWidth: "768px !important",
+        height: "136px",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         padding: "16px 0",
-        marginBottom: "16px",
-        backgroundColor: theme.palette.yoloYellow.main,
+        backgroundColor: "#f2f2f2",
         borderRadius: "0 0 16px 16px",
+        zIndex: 2,
       }}
     >
-      <Stack direction="row" spacing={2}>
-        <Typography variant="h1" fontSize={32} color={theme.palette.yolo.main}>
-          Leaders chart
-        </Typography>
-        {data.length > 1 && <AvatarSpinner avatars={data} />}
-      </Stack>
+      <Box id="content-wrapper" sx={{ width: "100%", position: "relative" }}>
+        <LogoTitle />
+        <ShortInfo avatar={avatar} topValue={topValue} />
+      </Box>
     </Container>
   );
 };
