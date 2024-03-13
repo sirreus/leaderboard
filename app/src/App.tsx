@@ -58,6 +58,11 @@ function App() {
     setTableSize(newValue as number);
   };
 
+  const handelDeleteUser = (id: string) => {
+    const newArray = userDataList.filter((data) => data.userId !== id);
+    updateUserDataList(newArray);
+  };
+
   const isLeaderBoard = tabIndex === 0;
   const isSettings = tabIndex === 1;
 
@@ -77,7 +82,12 @@ function App() {
             <Tab label="SETTINGS" />
           </Tabs>
         </Box>
-        {isLeaderBoard && <LeaderBoard data={userDataList} />}
+        {isLeaderBoard && (
+          <LeaderBoard
+            data={userDataList}
+            handelDeleteUser={handelDeleteUser}
+          />
+        )}
         {isSettings && (
           <Settings mark={tableSize} handleChange={handleTableSizeChange} />
         )}

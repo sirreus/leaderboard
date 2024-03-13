@@ -11,7 +11,10 @@ import { ILeaderBoard, IUserData } from "../../types";
 import UserDataRow from "./components/UserDataRow";
 import TableHeaderRow from "./components/TableHeaderRow";
 
-export const LeaderBoard: React.FC<ILeaderBoard> = ({ data }) => {
+export const LeaderBoard: React.FC<ILeaderBoard> = ({
+  data,
+  handelDeleteUser,
+}) => {
   const sortedData = data.sort((a, b) => b.score - a.score);
 
   return (
@@ -22,7 +25,7 @@ export const LeaderBoard: React.FC<ILeaderBoard> = ({ data }) => {
         </TableHead>
         <TableBody>
           {sortedData.map((row: IUserData) => (
-            <UserDataRow data={row} />
+            <UserDataRow data={row} handelDelete={handelDeleteUser} />
           ))}
         </TableBody>
       </Table>

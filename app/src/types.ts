@@ -8,10 +8,12 @@ export interface IUserData {
 
 export interface ILeaderBoard {
   data: IUserData[] | [];
+  handelDeleteUser: (id: string) => void;
 }
 
 export interface IUserDataRow {
   data: IUserData;
+  handelDelete: (id: string) => void;
 }
 
 export interface ISettings {
