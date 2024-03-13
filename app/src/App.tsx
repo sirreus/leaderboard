@@ -25,7 +25,7 @@ function leaderBoardReducer(
   action: ReducerAction
 ): IAppStore {
   switch (action.type) {
-    case "addUser": {
+    case "add_user": {
       const newUser: IUserData = action.payload;
       let { users } = state; // current list of users on the leader board
       const isFilled = users.length === state.tableSize;
@@ -56,7 +56,7 @@ function leaderBoardReducer(
       return newState;
     }
 
-    case "delUser": {
+    case "del_user": {
       const id: string = action.payload;
       return {
         ...state,
@@ -64,7 +64,7 @@ function leaderBoardReducer(
       };
     }
 
-    case "setSize": {
+    case "set_size": {
       const newTableSize: number = action.payload;
 
       return {
@@ -95,7 +95,7 @@ function App() {
   // Fetching the user data
   useEffect(() => {
     function handelSetUserData(data: any) {
-      dispatch({ type: "addUser", payload: data });
+      dispatch({ type: "add_user", payload: data });
     }
 
     socket.connect();
@@ -128,13 +128,13 @@ function App() {
 
   const handleTableSizeChange = useCallback(
     (_: Event, newValue: number | number[]) => {
-      dispatch({ type: "setSize", payload: newValue as number });
+      dispatch({ type: "set_size", payload: newValue as number });
     },
     []
   );
 
   const handelDeleteUser = useCallback((id: string) => {
-    dispatch({ type: "delUser", payload: id });
+    dispatch({ type: "del_user", payload: id });
   }, []);
 
   const isLeaderBoard = tabIndex === 0;
