@@ -5,11 +5,13 @@ import { IUserDataRow } from "../../../../types";
 import { IconButton, TableCell, TableRow } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
+import "./styles.css";
+
 export const UserDataRow: React.FC<IUserDataRow> = ({ data, handelDelete }) => {
   return (
     <TableRow
-      key={data.userId}
-      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+      className={data.isHighlighted ? "user-row highlighted" : "user-row"}
+      // sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
     >
       <TableCell component="th" scope="row">
         <img src={data.avatar} alt={data.username} width={32} />

@@ -4,6 +4,7 @@ export interface IUserData {
   score: number;
   userId: string;
   username: string;
+  isHighlighted?: boolean;
 }
 
 export interface ILeaderBoard {

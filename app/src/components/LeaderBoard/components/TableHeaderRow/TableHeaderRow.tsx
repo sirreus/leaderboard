@@ -5,7 +5,7 @@ import { TableCell, TableRow } from "@mui/material";
 import { IUserData } from "../../../../types";
 
 export const TableHeaderRow = () => {
-  type IUserDataShort = Omit<IUserData, "avatar" | "userId">;
+  type IUserDataShort = Omit<IUserData, "avatar" | "userId" | "isHighlighted">;
   type ColumnNamesObject = Record<keyof IUserDataShort, undefined>;
   const ColumnNamesProps: ColumnNamesObject = {
     email: undefined,
