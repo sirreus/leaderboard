@@ -2,6 +2,8 @@ import React from "react";
 
 import { Stack, Typography } from "@mui/material";
 
+import { useMobile } from "../../../hooks/useMobile";
+
 import ghIcon from "../../../assets/gh.png";
 
 import { theme } from "../../..";
@@ -12,6 +14,8 @@ interface IShortInfo {
 }
 
 export const ShortInfo: React.FC<IShortInfo> = ({ avatar, topValue }) => {
+  const isMobile = useMobile();
+
   return (
     <Stack
       id="short-info"
@@ -24,17 +28,31 @@ export const ShortInfo: React.FC<IShortInfo> = ({ avatar, topValue }) => {
         padding: "40px 24px 24px",
         borderRadius: "12px",
         backgroundColor: theme.palette.yoloYellow.main,
+        [theme.breakpoints.down("sm")]: {
+          top: "8px",
+          right: "8px",
+          padding: "16px",
+        },
       }}
     >
-      <Typography variant="h4" fontSize={32} color={theme.palette.yolo.main}>
-        Top: <b>{topValue || "#10"}</b>
-      </Typography>
-
-      <Stack direction="row" alignItems="flex-start">
-        <img src={ghIcon} alt="github" width={20} />
-        <Typography variant="subtitle2" color={theme.palette.yolo.light}>
-          GitHub users
+      <Stack direction={isMobile ? "column" : "column"} spacing={1}>
+        <Typography
+          variant="h4"
+          fontSize={isMobile ? 24 : 32}
+          color={theme.palette.yolo.main}
+        >
+          Top: <b>{topValue || "#10"}</b>
         </Typography>
+
+        <Stack direction="row" alignItems="flex-start">
+          <img src={ghIcon} alt="github" width={isMobile ? 24 : 20} />
+          <Typography
+            variant={isMobile ? "subtitle1" : "subtitle2"}
+            color={theme.palette.yolo.light}
+          >
+            GitHub users
+          </Typography>
+        </Stack>
       </Stack>
 
       {avatar && (

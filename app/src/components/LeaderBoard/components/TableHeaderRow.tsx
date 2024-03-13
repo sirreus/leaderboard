@@ -2,12 +2,17 @@ import React from "react";
 
 import { TableCell, TableRow } from "@mui/material";
 
+import { useMobile } from "../../../hooks/useMobile";
+
 import { IUserData } from "../../../types";
 import { theme } from "../../..";
 
 export const TableHeaderRow = () => {
+  const isMobile = useMobile();
+
   type IUserDataShort = Omit<IUserData, "avatar" | "userId">;
   type ColumnNamesObject = Record<keyof IUserDataShort, undefined>;
+
   const ColumnNamesProps: ColumnNamesObject = {
     username: undefined,
     email: undefined,
@@ -22,8 +27,8 @@ export const TableHeaderRow = () => {
   names.unshift(""); // for avatar
   names.push(""); // for delete button
 
-  return (
-    <TableRow>
+  const DesktopTableHeader = () => (
+    <>
       {names.map((name, index) => (
         <TableCell
           align="left"
@@ -38,6 +43,22 @@ export const TableHeaderRow = () => {
           {name}
         </TableCell>
       ))}
+    </>
+  );
+
+  const MobileTableHeader = () => (
+    <>
+      <TableCell align="center" />
+      <TableCell align="left" sx={{ wordWrap: "break-word" }}>
+        User
+      </TableCell>
+      <TableCell align="center" />
+    </>
+  );
+
+  return (
+    <TableRow>
+      {isMobile ? <MobileTableHeader /> : <DesktopTableHeader />}
     </TableRow>
   );
 };

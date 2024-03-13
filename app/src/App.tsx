@@ -11,6 +11,8 @@ import Settings from "./components/Settings";
 import TabsBar from "./components/TabsBar";
 import ErrorAlert from "./components/ErrorAlert";
 
+import { theme } from ".";
+
 const socket = io("ws://localhost:3050", {
   autoConnect: false,
 });
@@ -152,6 +154,9 @@ function App() {
         width: "768px",
         margin: "0 auto",
         paddingTop: "136px",
+        [theme.breakpoints.down("sm")]: {
+          width: "100vw",
+        },
       }}
     >
       <AppHeader
@@ -172,11 +177,23 @@ function App() {
           sx={{
             width: "inherit",
             padding: "0 0 24px 0 !important",
+            [theme.breakpoints.down("sm")]: {
+              width: "calc(100vw - 16px)",
+              padding: "136px 16px 32px",
+            },
           }}
         >
           <TabsBar tabIndex={tabIndex} tabChange={handleTabChange} />
 
-          <Box id="tab-content-wrapper" sx={{ paddingTop: "80px" }}>
+          <Box
+            id="tab-content-wrapper"
+            sx={{
+              paddingTop: "80px",
+              [theme.breakpoints.down("sm")]: {
+                paddingTop: "96px",
+              },
+            }}
+          >
             {isLeaderBoard && (
               <LeaderBoard data={users} deleteUser={handelDeleteUser} />
             )}
