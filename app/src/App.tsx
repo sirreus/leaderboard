@@ -9,6 +9,7 @@ import AppHeader from "./components/AppHeader";
 import LeaderBoard from "./components/LeaderBoard";
 import Settings from "./components/Settings";
 import TabsBar from "./components/TabsBar";
+import ErrorAlert from "./components/ErrorAlert";
 
 const socket = io("ws://localhost:3050", {
   autoConnect: false,
@@ -78,6 +79,10 @@ function leaderBoardReducer(
 }
 
 function App() {
+  const [isConnected, setConnected] = useState<boolean>(true);
+  const [error, setError] = useState<{ name: string; msg: string } | null>(
+    null
+  );
   const [tabIndex, setTabIndex] = useState<number>(0);
   const [{ tableSize, users, lastAddedId }, dispatch] = useReducer(
     leaderBoardReducer,
@@ -94,10 +99,18 @@ function App() {
     }
 
     socket.connect();
-    // EVENT LISTENERS
-    // socket.on('connect_error', ) // TODO show DISCONNECTED
-    // socket.on('connect', ) // TODO hide DISCONNECTED if shown
 
+    // EVENT LISTENERS
+    socket.on("connect_error", (error) => {
+      setError({ name: "Connection error", msg: error.message });
+      setConnected(false);
+    });
+    socket.on("connect", () => {
+      if (socket.connected) {
+        setConnected(true);
+        setError(null);
+      }
+    });
     socket.on("userData", handelSetUserData);
 
     return () => {
@@ -127,6 +140,8 @@ function App() {
   const isLeaderBoard = tabIndex === 0;
   const isSettings = tabIndex === 1;
 
+  const isOk = isConnected && !error;
+
   return (
     <Box
       sx={{
@@ -144,24 +159,33 @@ function App() {
         avatar={users.find((data) => data.userId === lastAddedId)?.avatar}
       />
 
-      <Container
-        component="main"
-        sx={{
-          width: "inherit",
-          padding: "0 0 24px 0 !important",
-        }}
-      >
-        <TabsBar tabIndex={tabIndex} tabChange={handleTabChange} />
+      {error && (
+        <ErrorAlert
+          title={error.name}
+          text="Oops!...Seems some crazy monkey bit the wire :("
+        />
+      )}
 
-        <Box id="tab-content-wrapper" sx={{ paddingTop: "80px" }}>
-          {isLeaderBoard && (
-            <LeaderBoard data={users} deleteUser={handelDeleteUser} />
-          )}
-          {isSettings && (
-            <Settings mark={tableSize} handleChange={handleTableSizeChange} />
-          )}
-        </Box>
-      </Container>
+      {isOk && (
+        <Container
+          component="main"
+          sx={{
+            width: "inherit",
+            padding: "0 0 24px 0 !important",
+          }}
+        >
+          <TabsBar tabIndex={tabIndex} tabChange={handleTabChange} />
+
+          <Box id="tab-content-wrapper" sx={{ paddingTop: "80px" }}>
+            {isLeaderBoard && (
+              <LeaderBoard data={users} deleteUser={handelDeleteUser} />
+            )}
+            {isSettings && (
+              <Settings mark={tableSize} handleChange={handleTableSizeChange} />
+            )}
+          </Box>
+        </Container>
+      )}
     </Box>
   );
 }
