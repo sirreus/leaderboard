@@ -9,31 +9,27 @@ import {
   TableHead,
 } from "@mui/material";
 
-import { ILeaderBoard, IUserData } from "../../types";
+import { IUserData } from "../../types";
 
-import UserDataRow from "./components/UserDataRow";
-import TableHeaderRow from "./components/TableHeaderRow";
+import { UserDataRow } from "./components/UserDataRow";
+import { TableHeaderRow } from "./components/TableHeaderRow";
 
-export const LeaderBoard: React.FC<ILeaderBoard> = ({
-  data,
-  handelDeleteUser,
-}) => {
-  const sortedData = data.sort((a, b) => b.score - a.score);
+interface ILeaderBoard {
+  data: IUserData[] | [];
+  deleteUser: (id: string) => void;
+}
 
+export const LeaderBoard: React.FC<ILeaderBoard> = ({ data, deleteUser }) => {
   return (
-    <Box sx={{ padding: "16px" }}>
+    <Box sx={{ padding: "16px", overflow: "hidden" }}>
       <TableContainer component={Paper} elevation={0}>
         <Table>
           <TableHead>
             <TableHeaderRow />
           </TableHead>
           <TableBody>
-            {sortedData.map((row: IUserData) => (
-              <UserDataRow
-                data={row}
-                handelDelete={handelDeleteUser}
-                key={row.userId}
-              />
+            {data.map((row: IUserData) => (
+              <UserDataRow data={row} onDelete={deleteUser} key={row.userId} />
             ))}
           </TableBody>
         </Table>
