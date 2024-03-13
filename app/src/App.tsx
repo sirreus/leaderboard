@@ -1,13 +1,54 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import io from "socket.io-client";
+
 import { Box, Container, Tab, Tabs, Typography } from "@mui/material";
 
-import "./App.css";
 import LeaderBoard from "./components/LeaderBoard";
 import Settings from "./components/Settings";
 
+import "./App.css";
+import { IUserData } from "./types";
+
 function App() {
+  const socket = io("ws://localhost:3050");
+
   const [tabIndex, setTabIndex] = useState<number>(0);
   const [tableSize, setTableSize] = useState<number>(10);
+  const [userData, setUserData] = useState<IUserData | null>(null);
+  const [userDataList, updateUserDataList] = useState<IUserData[]>([]);
+
+  // fetch the data
+  useEffect(() => {
+    const notFilled = userDataList.length < tableSize;
+
+    function handelSetUserData(data: any) {
+      setUserData(data);
+    }
+
+    if (!userData || notFilled) socket.on("userData", handelSetUserData);
+
+    return () => {
+      socket.off("userData", handelSetUserData);
+    };
+  }, [socket, userData, tableSize, userDataList]);
+
+  // filling out the table
+  useEffect(() => {
+    const existData = userDataList.find(
+      (data) => data.userId === userData?.userId
+    );
+    if (userData && !existData) {
+      updateUserDataList((prev) => [...prev, userData]);
+    }
+  }, [userData, userDataList]);
+
+  // changing the amount of data in the table
+  useEffect(() => {
+    if (userDataList.length > tableSize) {
+      const newArray = userDataList.slice(0, tableSize - 1);
+      updateUserDataList(newArray);
+    }
+  }, [tableSize]);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabIndex(newValue);
@@ -19,6 +60,8 @@ function App() {
 
   const isLeaderBoard = tabIndex === 0;
   const isSettings = tabIndex === 1;
+
+  console.log(userData);
 
   return (
     <div className="App">
@@ -34,7 +77,7 @@ function App() {
             <Tab label="SETTINGS" />
           </Tabs>
         </Box>
-        {isLeaderBoard && <LeaderBoard />}
+        {isLeaderBoard && <LeaderBoard data={userDataList} />}
         {isSettings && (
           <Settings mark={tableSize} handleChange={handleTableSizeChange} />
         )}

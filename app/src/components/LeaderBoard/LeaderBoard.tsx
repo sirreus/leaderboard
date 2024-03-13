@@ -7,12 +7,12 @@ import {
   TableContainer,
   TableHead,
 } from "@mui/material";
-import { IUserData } from "../../types";
+import { ILeaderBoard, IUserData } from "../../types";
 import UserDataRow from "./components/UserDataRow";
 import TableHeaderRow from "./components/TableHeaderRow";
 
-export const LeaderBoard: React.FC = () => {
-  const data: IUserData[] = [];
+export const LeaderBoard: React.FC<ILeaderBoard> = ({ data }) => {
+  const sortedData = data.sort((a, b) => b.score - a.score);
 
   return (
     <TableContainer component={Paper}>
@@ -21,7 +21,7 @@ export const LeaderBoard: React.FC = () => {
           <TableHeaderRow />
         </TableHead>
         <TableBody>
-          {data.map((row: IUserData) => (
+          {sortedData.map((row: IUserData) => (
             <UserDataRow data={row} />
           ))}
         </TableBody>
